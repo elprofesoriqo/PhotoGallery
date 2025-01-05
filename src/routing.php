@@ -1,12 +1,18 @@
 <?php
-
+// routing.php
 $routing = [
-    '/' => 'products',
-    '/products' => 'products',
-    '/view' => 'product',
+    '/' => 'gallery',
+    '/gallery' => 'gallery',
+    '/selected' => 'selected',
+    '/selected/add' => 'add_to_selected',
+    '/view' => 'picture',
     '/edit' => 'edit',
     '/delete' => 'delete',
-    '/cart' => 'cart',
-    '/cart/clear' => 'clear_cart',
-    '/cart/add' => 'add_to_cart',
+    '/gallery/clear' => 'clear_gallery',
+    '/gallery/add' => 'add_to_gallery',
+    '/register' => 'register',
+    '/login' => 'login',
+    '/logout' => 'logout',
+    '/upload' => 'upload',
+    '/saved' => 'saved'
 ];

@@ -1,48 +1,246 @@
 <?php
-// Constants for file handling and image processing
-define('UPLOAD_PATH', '../../images/');
-define('MAX_FILE_SIZE', 1048576); // 1MB in bytes
-define('THUMBNAIL_WIDTH', 200);
-define('THUMBNAIL_HEIGHT', 125);
 
-// Database connection handling
-function connectToDatabase() {
+use MongoDB\BSON\ObjectID;
+
+define('THUMBNAIL_WIDTH', 200);
+define('THUMBNAIL_HEIGHT', 200);
+function get_db()
+{
+    $mongo = new MongoDB\Client(
+        "mongodb://localhost:27017/wai",
+        [
+            'username' => 'wai_web',
+            'password' => 'w@i_w3b',
+        ]);
+
+    $db = $mongo->wai;
+
+    return $db;
+}
+
+
+
+function get_gallery()
+{
+    $db = get_db();
+    return $db->gallery->find()->toArray();
+}
+
+
+
+
+function get_users()
+{
+    $db = get_db();
+    return $db->users->find()->toArray();
+}
+
+
+function get_picture($id)
+{
+    $db = get_db();
+    return $db->gallery->findOne(['_id' => new ObjectID($id)]);
+}
+
+
+function get_login_check($login)
+{
+    $db = get_db();
+    $result = $db->users->find(['login' => $login])->toArray();
+    return(!empty($result));
+}
+
+function save_user($user)
+{
+    $db = get_db();
+    $db->users->insertOne($user);
+}
+
+
+function authenticate($login, $pass){
+    try{
+        $db = get_db();
+        
+        $result = $db->users->findOne(['login' => $login]);
+        if(empty($result))
+        {
+            throw new Exception('Incorrect login details');
+        }
+        $hash=$result['hash'];
+        
+        if(password_verify($pass, $hash)){
+            
+            $_SESSION['islogged']=1;
+            $_SESSION['loggedid']=session_id();
+            $_SESSION['loggeduser']=$login;
+
+        }else{
+            throw new Exception('Incorrect login details');
+        }
+    }catch(Exception $e){
+        $_SESSION['error']=$e->getMessage();
+        return false;
+    }
+    return true;
+}
+
+
+
+
+function save_picture($id, $picture, $watermark)
+{
+    $db = get_db();
+    if($_FILES['file']['error']==0)
+    {
+        if ($id == null) {
+            $insertResult = $db->gallery->insertOne($picture);
+            $newDocID = $insertResult->getInsertedId();
+
+            if(handleImageUpload($newDocID, $watermark)) {
+                return true;
+            }
+        } else {
+            $db->gallery->replaceOne(['_id' => new ObjectID($id)], $picture);
+            if(handleImageUpload($id, $watermark)) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+
+function handleImageUpload($id, $watermark) {
     try {
-        $mongo = new MongoDB\Client(
-            "mongodb://localhost:27017/wai",
-            [
-                'username' => 'wai_web',
-                'password' => 'w@i_w3b',
-                'connectTimeoutMS' => 2000,
-                'retryWrites' => true
-            ]
-        );
-        return $mongo->wai;
-    } catch (Exception $e) {
-        error_log("Database connection error: " . $e->getMessage());
-        throw new Exception("Unable to connect to database. Please try again later.");
+        if($_FILES['file']['error'] !== UPLOAD_ERR_OK) {
+            return false;
+        }
+
+        $imageType = $_FILES['file']['type'];
+        if(!in_array($imageType, ['image/jpeg', 'image/png'])) {
+            throw new Exception('Invalid image type');
+        }
+
+        $extension = ($imageType === 'image/jpeg') ? '.jpg' : '.png';
+        $tempPath = $_FILES['file']['tmp_name'];
+        $targetPath = UPLOAD_PATH . $id . $extension;
+
+        if(!move_uploaded_file($tempPath, $targetPath)) {
+            return false;
+        }
+
+        // Create original image resource
+        $sourceImage = ($imageType === 'image/jpeg') ?
+            imagecreatefromjpeg($targetPath) :
+            imagecreatefrompng($targetPath);
+
+        if(!$sourceImage) {
+            return false;
+        }
+
+        // Create and save watermarked version
+        $watermarked = addWatermark($sourceImage, $watermark);
+        $watermarkPath = UPLOAD_PATH . $id . 'wm' . $extension;
+
+        if($imageType === 'image/jpeg') {
+            imagejpeg($watermarked, $watermarkPath, 90);
+        } else {
+            imagepng($watermarked, $watermarkPath, 9);
+        }
+
+        imagedestroy($watermarked);
+        imagedestroy($sourceImage);
+
+        return true;
+    } catch(Exception $e) {
+        $_SESSION['error'] = $e->getMessage();
+        return false;
+    }
+}
+function delete_picture($id)
+{
+    $db = get_db();
+    $db->gallery->deleteOne(['_id' => new ObjectID($id)]);
+}
+
+function drop_users()
+{
+    $db = get_db();
+    $db->users->drop();
+}
+
+function getImgType($type)
+{
+    if($type =="image/png"){
+        return ".png";
+    }
+    if($type =="image/jpeg"){
+        return ".jpg";
+    }
+    throw new Exception('The uploaded file does not match accepted format');
+}
+
+
+function validate_data($login, $email, $pass, $pass2)
+{
+    try{
+        if(!filter_var($email, FILTER_VALIDATE_EMAIL)){
+            throw new Exception('Email is incorrect');
+        }
+        if($pass !==$pass2){
+            throw new Exception('Passwords differ');
+        }
+        if(get_login_check($login)){
+            throw new Exception('Login already taken');
+        }
+        
+
+        return true;
+
+    }catch(Exception $e){
+        $_SESSION['error']=$e->getMessage();
+        return false;
     }
 }
 
-// Image processing functions
-function createThumbnail($sourceImage) {
-    $originalWidth = imagesx($sourceImage);
-    $originalHeight = imagesy($sourceImage);
 
-    $thumbnail = imagecreatetruecolor(THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT);
 
-    // Preserve transparency for PNG images
-    imagealphablending($thumbnail, false);
-    imagesavealpha($thumbnail, true);
+define('UPLOAD_PATH', '../../images/');
+define('MAX_FILE_SIZE', 1048576); // 1MB in bytes
 
-    imagecopyresampled(
-        $thumbnail, $sourceImage,
-        0, 0, 0, 0,
-        THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT,
-        $originalWidth, $originalHeight
-    );
 
-    return $thumbnail;
+function uploadImage($file, $watermark, $id) {
+    try {
+        if (!checkUpload($file)) {
+            throw new Exception('Invalid file upload');
+        }
+
+        $imageType = $file['type'];
+        $fileExtension = getFileExtension($imageType);
+
+        $tempPath = $file['tmp_name'];
+        $targetPath = UPLOAD_PATH . $id . $fileExtension;
+
+        if (!move_uploaded_file($tempPath, $targetPath)) {
+            throw new Exception('Failed to move uploaded file');
+        }
+
+        processImage($targetPath, $imageType, $id, $watermark);
+        return true;
+
+    } catch (Exception $e) {
+        throw $e;
+    }
+}
+
+function resizeImage($source, $width, $height) {
+    $sourceWidth = imagesx($source);
+    $sourceHeight = imagesy($source);
+
+    $resized = imagecreatetruecolor($width, $height);
+    imagecopyresampled($resized, $source, 0, 0, 0, 0, $width, $height, $sourceWidth, $sourceHeight);
+
+    return $resized;
 }
 
 function addWatermark($sourceImage, $watermarkText) {
@@ -55,12 +253,11 @@ function addWatermark($sourceImage, $watermarkText) {
     $white = imagecolorallocate($watermarked, 255, 255, 255);
     $black = imagecolorallocate($watermarked, 0, 0, 0);
 
-    $angle = -25;
-    $fontSize = 5;
     $spacing = 150;
+    $fontSize = 5;
 
-    for ($y = -$height; $y < $height * 2; $y += $spacing) {
-        for ($x = -$width; $x < $width * 2; $x += strlen($watermarkText) * 15) {
+    for ($y = 0; $y < $height; $y += $spacing) {
+        for ($x = 0; $x < $width; $x += strlen($watermarkText) * 15) {
             imagestring($watermarked, $fontSize, $x + 1, $y + 1, $watermarkText, $black);
             imagestring($watermarked, $fontSize, $x, $y, $watermarkText, $white);
         }
@@ -69,138 +266,36 @@ function addWatermark($sourceImage, $watermarkText) {
     return $watermarked;
 }
 
-function processImage($sourceFile, $imageType, $id, $watermark) {
-    // Create image resource based on type
-    $sourceImage = $imageType === 'image/jpeg' ?
-        imagecreatefromjpeg($sourceFile) :
-        imagecreatefrompng($sourceFile);
-
-    if (!$sourceImage) {
-        throw new Exception('Failed to process image. The file may be corrupted.');
+function saveImage($image, $path, $imageType) {
+    if (!is_resource($image) && !is_object($image)) {
+        throw new Exception('Invalid image resource provided');
     }
 
-    $fileExtension = getFileExtension($imageType);
-
-    // Process original version
-    $originalPath = UPLOAD_PATH . $id . $fileExtension;
-    if (!imagejpeg($sourceImage, $originalPath, 90)) {
-        throw new Exception('Failed to save original image');
+    $result = false;
+    if ($imageType === 'image/jpeg') {
+        $result = imagejpeg($image, $path, 90);
+    } else if ($imageType === 'image/png') {
+        $result = imagepng($image, $path, 9);
     }
 
-    // Process thumbnail version
-    $thumbnail = createThumbnail($sourceImage);
-    $thumbnailPath = UPLOAD_PATH . $id . '_thumb' . $fileExtension;
-    if (!imagejpeg($thumbnail, $thumbnailPath, 90)) {
-        throw new Exception('Failed to save thumbnail');
+    if (!$result) {
+        throw new Exception('Failed to save image: ' . $path);
     }
-    imagedestroy($thumbnail);
-
-    // Process watermarked version
-    $watermarked = addWatermark($sourceImage, $watermark);
-    $watermarkedPath = UPLOAD_PATH . $id . '_wm' . $fileExtension;
-    if (!imagejpeg($watermarked, $watermarkedPath, 90)) {
-        throw new Exception('Failed to save watermarked image');
-    }
-    imagedestroy($watermarked);
-    imagedestroy($sourceImage);
 }
 
-// File upload handling
-function handleImageUpload($file, $watermark) {
-    if ($file['error'] !== UPLOAD_ERR_OK) {
-        throw new Exception(getUploadErrorMessage($file['error']));
-    }
-
-    if ($file['size'] > MAX_FILE_SIZE) {
-        throw new Exception('File size exceeds the maximum limit of 1MB');
-    }
-
-    if (!in_array($file['type'], ['image/jpeg', 'image/png'])) {
-        throw new Exception('Only JPEG and PNG files are allowed');
-    }
-
-    $id = new MongoDB\BSON\ObjectId();
-    $tempPath = $file['tmp_name'];
-    $targetPath = UPLOAD_PATH . $id . getFileExtension($file['type']);
-
-    if (!move_uploaded_file($tempPath, $targetPath)) {
-        throw new Exception('Failed to upload file');
-    }
-
-    processImage($targetPath, $file['type'], $id, $watermark);
-    return $id;
-}
-
-// User authentication and management
-function authenticateUser($db, $login, $password) {
-    $user = $db->users->findOne(['login' => $login]);
-
-    if (!$user || !password_verify($password, $user['password'])) {
-        throw new Exception('Invalid login credentials');
-    }
-
-    return [
-        'id' => $user['_id'],
-        'login' => $user['login'],
-        'email' => $user['email']
-    ];
-}
-
-function createUser($db, $userData) {
-    if ($db->users->findOne(['login' => $userData['login']])) {
-        throw new Exception('Username already exists');
-    }
-
-    if ($db->users->findOne(['email' => $userData['email']])) {
-        throw new Exception('Email already registered');
-    }
-
-    $userData['password'] = password_hash($userData['password'], PASSWORD_BCRYPT);
-    $userData['created_at'] = new MongoDB\BSON\UTCDateTime();
-
-    $result = $db->users->insertOne($userData);
-    return $result->getInsertedId();
-}
-
-// Image and gallery management
-function getImages($db, $page = 1, $limit = 20, $filter = []) {
-    $skip = ($page - 1) * $limit;
-    $options = [
-        'limit' => $limit,
-        'skip' => $skip,
-        'sort' => ['created_at' => -1]
-    ];
-
-    $images = $db->images->find($filter, $options)->toArray();
-    $total = $db->images->countDocuments($filter);
-
-    return [
-        'images' => $images,
-        'pagination' => [
-            'total' => $total,
-            'page' => $page,
-            'pages' => ceil($total / $limit)
-        ]
-    ];
-}
-
-function saveImage($db, $imageData) {
-    $imageData['created_at'] = new MongoDB\BSON\UTCDateTime();
-    $result = $db->images->insertOne($imageData);
-    return $result->getInsertedId();
-}
-
-// Helper functions
 function getFileExtension($mimeType) {
-    $extensions = [
-        'image/jpeg' => '.jpg',
-        'image/png' => '.png'
-    ];
-    return $extensions[$mimeType] ?? '.jpg';
+    switch ($mimeType) {
+        case 'image/jpeg':
+            return '.jpg';
+        case 'image/png':
+            return '.png';
+        default:
+            throw new Exception('Unsupported image type. Only JPEG and PNG are allowed.');
+    }
 }
 
 function getUploadErrorMessage($errorCode) {
-    $errorMessages = [
+    $messages = [
         UPLOAD_ERR_INI_SIZE => 'File exceeds PHP maximum file size limit',
         UPLOAD_ERR_FORM_SIZE => 'File exceeds form maximum file size limit',
         UPLOAD_ERR_PARTIAL => 'File was only partially uploaded',
@@ -209,5 +304,26 @@ function getUploadErrorMessage($errorCode) {
         UPLOAD_ERR_CANT_WRITE => 'Failed to write file to disk',
         UPLOAD_ERR_EXTENSION => 'File upload stopped by extension'
     ];
-    return $errorMessages[$errorCode] ?? 'Unknown upload error occurred';
+    return $messages[$errorCode] ?? 'Unknown upload error occurred';
+}
+function checkUpload($file) {
+    // Check for basic upload errors
+    if ($file['error'] !== UPLOAD_ERR_OK) {
+        $_SESSION['error'] = getUploadErrorMessage($file['error']);
+        return false;
+    }
+
+    // Check file size
+    if ($file['size'] > MAX_FILE_SIZE) {
+        $_SESSION['error'] = 'File size exceeds the maximum limit of 1MB';
+        return false;
+    }
+
+    // Check file type
+    if (!in_array($file['type'], ['image/jpeg', 'image/png'])) {
+        $_SESSION['error'] = 'Only JPEG and PNG files are allowed';
+        return false;
+    }
+
+    return true;
 }

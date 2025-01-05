@@ -2,74 +2,53 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upload Image</title>
-    <link rel="stylesheet" href="assets/styles/upload.scss">
+    <link rel="stylesheet" href="static/styles/main.css">
 </head>
 <body>
-<?php
-// Upload handling logic
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $maxFileSize = 1 * 1024 * 1024; // 1 MB in bytes
-    $allowedTypes = ['image/jpeg', 'image/jpg'];
-    $uploadDir = 'images/';
+<div class="upload-container">
+    <h2 class="upload-title">Upload New Image</h2>
 
-    if (isset($_FILES['file'])) {
-        $file = $_FILES['file'];
-        $title = isset($_POST['title']) ? $_POST['title'] : '';
-        $author = isset($_POST['author']) ? $_POST['author'] : '';
-
-        // Validate file size
-        if ($file['size'] > $maxFileSize) {
-            $error = 'File size must be less than 1 MB';
-        }
-        // Validate file type
-        elseif (!in_array($file['type'], $allowedTypes)) {
-            $error = 'Only JPG/JPEG files are allowed';
-        }
-        else {
-            // Create upload directory if it doesn't exist
-            if (!file_exists($uploadDir)) {
-                mkdir($uploadDir, 0777, true);
-            }
-
-            // Generate unique filename
-            $filename = uniqid() . '_' . basename($file['name']);
-            $destination = $uploadDir . $filename;
-
-            // Move uploaded file
-            if (move_uploaded_file($file['tmp_name'], $destination)) {
-                $success = 'File uploaded successfully';
-            } else {
-                $error = 'Failed to upload file';
-            }
-        }
-    }
-}
-?>
-
-<div class="container">
-    <?php if (isset($error)): ?>
-        <div class="error-message"><?php echo $error; ?></div>
+    <?php if (!empty($error)): ?>
+        <div class="alert alert-danger"><?php echo htmlspecialchars($error); ?></div>
     <?php endif; ?>
 
-    <?php if (isset($success)): ?>
-        <div class="success-message"><?php echo $success; ?></div>
+    <?php if (!empty($success)): ?>
+        <div class="alert alert-success"><?php echo htmlspecialchars($success); ?></div>
     <?php endif; ?>
 
-    <form class="upload-form" method="POST" enctype="multipart/form-data">
+    <form method="POST" enctype="multipart/form-data" class="upload-form">
         <div class="form-group">
-            <label for="file">Image:</label>
-            <input class="form-control-file" type="file" name="file" id="file" required>
+            <label for="file">Image File</label>
+            <input type="file" id="file" name="file" required accept="image/jpeg,image/png">
+            <small class="form-text">Max file size: 1MB. Allowed types: JPEG, PNG</small>
         </div>
+
         <div class="form-group">
-            <label for="title">Title:</label>
-            <input class="form-control" type="text" name="title" id="title" required>
+            <label for="name">Image Title</label>
+            <input type="text" id="name" name="name" required>
         </div>
+
         <div class="form-group">
-            <label for="author">Author:</label>
-            <input class="form-control" type="text" name="author" id="author" required>
+            <label for="author">Author</label>
+            <input type="text" id="author" name="author" required>
         </div>
-        <button class="btn-primary" type="submit">Upload</button>
+
+        <div class="form-group">
+            <label for="watermark">Watermark Text</label>
+            <input type="text" id="watermark" name="watermark" required>
+        </div>
+
+        <div class="form-group">
+            <label for="description">Description (optional)</label>
+            <textarea id="description" name="description" rows="3"></textarea>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Upload</button>
+            <a href="/gallery" class="btn btn-secondary">Back to Gallery</a>
+        </div>
     </form>
 </div>
 </body>

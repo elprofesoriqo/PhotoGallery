@@ -1,10 +1,10 @@
 <?php
 
-function &get_cart()
+function &get_selected()
 {
-    if (!isset($_SESSION['cart'])) {
-        $_SESSION['cart'] = []; //pusty koszyk
+    if (!isset($_SESSION['selected'])) {
+        $_SESSION['selected'] = [];
     }
 
-    return $_SESSION['cart'];
+    return $_SESSION['selected'];
 }

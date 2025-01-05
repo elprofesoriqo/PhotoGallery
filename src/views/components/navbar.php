@@ -1,25 +1,24 @@
-<nav id="main-navbar" class="navbar">
-    <div id="navbar-container" class="container">
-        <a id="navbar-brand" class="brand" href="/">Gallery</a>
-        <ul id="navbar-items" class="nav-items">
-            <li class="nav-item">
-                <a class="nav-link" href="/saved">Saved Images</a>
-            </li>
-            <?php if ($model->loggedIn) { ?>
-                <li class="nav-item">
-                    <a class="nav-link" href="/logout">Logout</a>
-                </li>
-            <?php } else { ?>
-                <li class="nav-item">
-                    <a class="nav-link" href="/login">Login</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/register">Register</a>
-                </li>
-            <?php } ?>
-            <li class="nav-item">
-                <a class="nav-link" href="/uploader">Post Photos</a>
-            </li>
-        </ul>
+<div id="navbar">
+    <div class="container">
+        <a href="gallery" class="nav-item">Gallery</a>
+        <a href="selected" class="nav-item">Selected Photos</a>
+        <a href="edit" class="nav-item">Add Photo</a>
+
+        <?php if (isset($_SESSION['islogged'])): ?>
+            <a href="logout" class="nav-action">Logout</a>
+            <?php if (isset($_SESSION['loggeduser'])): ?>
+                <span class="nav-user">Logged in as: <?= htmlspecialchars($_SESSION['loggeduser']) ?></span>
+            <?php endif ?>
+        <?php else: ?>
+            <a href="register" class="nav-action">Register</a>
+            <a href="login" class="nav-action">Login</a>
+        <?php endif ?>
     </div>
-</nav>
+    <div class="error-container">
+        <?php if (isset($_SESSION['error']) && $_SESSION['error'] != ''): ?>
+            <p class="error-message"><?= htmlspecialchars($_SESSION['error']) ?></p>
+            <?php $_SESSION['error'] = ''; ?>
+        <?php endif ?>
+    </div>
+    <hr />
+</div>

@@ -1,47 +1,29 @@
 <?php
-// Include our new database functions
 require_once 'business.php';
 require_once 'controller_utils.php';
 
-// Initialize database connection at the start
-$db = connectToDatabase();
 
-function products(&$model) {
-    global $db;
-    // Get all images with pagination
-    $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-    $result = getImages($db, $page, 20);
+function gallery(&$model)
+{
+    $gallery = get_gallery();
 
-    $model['products'] = $result['images'];
-    $model['pagination'] = $result['pagination'];
+    $model['gallery'] = $gallery;
 
-    return 'products_view';
+    return 'gallery';
 }
 
-function selected(&$model) {
-    global $db;
-    // Get images for selected view with specific filter if needed
-    $filter = ['selected' => true]; // Example filter for selected images
-    $result = getImages($db, 1, 20, $filter);
 
-    $model['products'] = $result['images'];
-    return 'selected_view';
-}
 
-function product(&$model) {
-    global $db;
+
+function picture(&$model)
+{
     if (!empty($_GET['id'])) {
         $id = $_GET['id'];
-        try {
-            $objectId = new MongoDB\BSON\ObjectId($id);
-            $product = $db->images->findOne(['_id' => $objectId]);
 
-            if ($product) {
-                $model['product'] = $product;
-                return 'product_view';
-            }
-        } catch (Exception $e) {
-            $_SESSION['error'] = 'Invalid product ID';
+        if ($picture = get_picture($id)) {
+            $model['gallery'] = $picture;  // Changed from 'picture' to 'gallery' to match view
+
+            return 'picture';
         }
     }
 
@@ -49,9 +31,10 @@ function product(&$model) {
     exit;
 }
 
-function edit(&$model) {
-    global $db;
-    $product = [
+
+function edit(&$model)
+{
+    $picture = [
         'name' => null,
         'author' => null,
         'type' => null,
@@ -60,171 +43,188 @@ function edit(&$model) {
     ];
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        if (!empty($_POST['name']) && !empty($_POST['author']) && !empty($_POST['watermark'])) {
-            try {
-                // Handle file upload with watermark
-                $id = handleImageUpload($_FILES['file'], $_POST['watermark']);
+        if (!empty($_POST['name']) &&
+            !empty($_POST['author']) &&
+            !empty($_POST['watermark']) &&
+            isset($_FILES['file'])
+        ) {
+            $id = isset($_POST['id']) ? $_POST['id'] : null;
 
-                $imageData = [
+            try {
+                // Validate file upload
+                if ($_FILES['file']['error'] === UPLOAD_ERR_INI_SIZE) {
+                    throw new Exception('File is too big (max 1MB allowed)');
+                }
+
+                if ($_FILES['file']['error'] !== UPLOAD_ERR_OK) {
+                    throw new Exception('File upload error: ' . $_FILES['file']['error']);
+                }
+
+                // Create picture record
+                $picture = [
                     'name' => $_POST['name'],
                     'author' => $_POST['author'],
-                    'type' => 1,
+                    'type' => $_FILES['file']['type'],
                     'extension' => getFileExtension($_FILES['file']['type'])
                 ];
 
-                // Save image metadata
-                saveImage($db, $imageData);
-                return 'redirect:products';
+                // Save picture and process image
+                if (save_picture($id, $picture, $_POST['watermark'])) {
+                    return 'redirect:gallery';
+                }
+
+                throw new Exception('Failed to save picture');
 
             } catch (Exception $e) {
                 $_SESSION['error'] = $e->getMessage();
-                $model['product'] = $product;
-                return 'edit_view';
+                $model['picture'] = $picture;
+                return 'upload';
             }
+        } else {
+            $_SESSION['error'] = 'Please fill all required fields';
+            $model['picture'] = $picture;
+            return 'upload';
         }
     } elseif (!empty($_GET['id'])) {
-        try {
-            $objectId = new MongoDB\BSON\ObjectId($_GET['id']);
-            $product = $db->images->findOne(['_id' => $objectId]);
-        } catch (Exception $e) {
-            $_SESSION['error'] = 'Invalid product ID';
-        }
+        $picture = get_picture($_GET['id']);
     }
 
-    $model['product'] = $product;
-    return 'edit_view';
+    $model['picture'] = $picture;
+    return 'upload';
 }
 
-function delete(&$model) {
-    global $db;
+
+
+
+function delete(&$model)
+{
     if (!empty($_REQUEST['id'])) {
         $id = $_REQUEST['id'];
 
-        try {
-            $objectId = new MongoDB\BSON\ObjectId($id);
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            delete_picture($id);
+            return 'redirect:gallery';
 
-            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                // Delete image files
-                $product = $db->images->findOne(['_id' => $objectId]);
-                if ($product) {
-                    $basePath = UPLOAD_PATH . $id;
-                    @unlink($basePath . $product['extension']);
-                    @unlink($basePath . '_thumb' . $product['extension']);
-                    @unlink($basePath . '_wm' . $product['extension']);
-
-                    // Delete from database
-                    $db->images->deleteOne(['_id' => $objectId]);
-                    return 'redirect:products';
-                }
-            } else {
-                $product = $db->images->findOne(['_id' => $objectId]);
-                if ($product) {
-                    $model['product'] = $product;
-                    return 'delete_view';
-                }
+        } else {
+            if ($picture = get_picture($id)) {
+                $model['gallery'] = $picture;
+                return 'delete';
             }
-        } catch (Exception $e) {
-            $_SESSION['error'] = 'Invalid product ID';
         }
     }
-
     http_response_code(404);
     exit;
 }
 
-function register(&$model) {
-    global $db;
+
+
+function register(&$model)
+{
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        if (isset($_POST['login']) && isset($_POST['pass']) && isset($_POST['pass2']) && isset($_POST['email'])) {
-            $login = trim($_POST['login']);
-            $email = trim($_POST['email']);
-            $pass = trim($_POST['pass']);
-            $pass2 = trim($_POST['pass2']);
+        if(isset($_POST['login']) && isset($_POST['pass']) && isset($_POST['pass2']) && isset($_POST['email']))
+        {
+            $login=trim($_POST['login']);
+            $email=trim($_POST['email']);
+            $pass=trim($_POST['pass']);
+            $pass2=trim($_POST['pass2']);
 
-            if (validate_data($login, $email, $pass, $pass2)) {
-                try {
-                    $userData = [
-                        'login' => $login,
-                        'email' => $email,
-                        'password' => $pass
-                    ];
+            if(validate_data($login,$email,$pass,$pass2)){
+                
+                $hash=password_hash($pass, PASSWORD_DEFAULT);
 
-                    createUser($db, $userData);
-                    return 'redirect:products';
-                } catch (Exception $e) {
-                    $_SESSION['error'] = $e->getMessage();
-                    return 'register_view';
-                }
-            }
-            return 'register_view';
-        }
-    }
-    return 'register_view';
-}
+                $user = [
+                    'login' => $login,
+                    'email' => $email,
+                    'hash' => $hash=password_hash($pass, PASSWORD_DEFAULT)
 
-function login(&$model) {
-    global $db;
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        if (isset($_POST['user']) && isset($_POST['pass'])) {
-            $login = trim($_POST['user']);
-            $pass = trim($_POST['pass']);
+                ];
+                save_user($user);
 
-            try {
-                $user = authenticateUser($db, $login, $pass);
-                $_SESSION['user'] = $user;
-                return 'redirect:products';
-            } catch (Exception $e) {
-                $_SESSION['error'] = $e->getMessage();
-                return 'login_view';
+
+                return 'redirect:gallery';
+
+            }else {
+                return 'register';
             }
         }
+    } else {
+            return 'register';
     }
-    return 'login_view';
+
+    return 'redirect:gallery';
 }
 
-function logout(&$model) {
-    setcookie(session_id(), "", time() - 3600);
+
+function login(&$model)
+{
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if(isset($_POST['user']) && isset($_POST['pass']))
+        {
+            $login=trim($_POST['user']);
+            $pass=trim($_POST['pass']);
+
+            if(!authenticate($login,$pass)){
+                return 'login';
+            }
+        }
+
+    } else {
+        return 'login';
+        
+    }
+
+    return 'redirect:gallery';
+}
+
+
+function logout(&$model)
+{
+    setcookie (session_id(), "", time() - 3600);
     session_destroy();
     session_write_close();
-    return 'redirect:products';
+
+    return 'redirect:gallery';
 }
 
-// Cart functionality remains similar but uses new database structure
-function cart(&$model) {
-    $model['cart'] = get_cart();
-    return 'partial/navbar_view';
+
+function selected(&$model)
+{
+    $model['gallery'] = get_gallery();
+    $model['selected'] = get_selected();
+    return 'components/selected';
 }
 
-function add_to_cart() {
-    global $db;
+
+
+
+function add_to_selected(&$model)  // Note: must accept $model parameter
+{
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id1'])) {
-        $products = $db->images->find()->toArray();
-        $num = count($products);
+        $db = get_db();
+        $num = count($db->gallery->find()->toArray());
 
-        for ($i = 1; $i <= $num; $i++) {
-            $amount = isset($_POST["$i"]) ? 1 : 0;
-            $id = $_POST["id$i"];
-
-            try {
-                $objectId = new MongoDB\BSON\ObjectId($id);
-                $product = $db->images->findOne(['_id' => $objectId]);
-
-                if ($product && $amount > 0) {
-                    $cart = &get_cart();
-                    $cart[$id] = ['name' => $product['name'], 'amount' => $amount];
-                }
-            } catch (Exception $e) {
-                continue;
+        for($i=1; $i<=$num; $i++) {
+            $amount = 0;
+            if(isset($_POST["$i"])) {
+                $amount = 1;
             }
+            $id = $_POST["id$i"];
+            $product = get_picture($id);
+            $cart = &get_selected();
+            $cart[$id] = ['name' => $product['name'], 'amount' => $amount];
         }
 
         return 'redirect:' . $_SERVER['HTTP_REFERER'];
     }
+    return 'redirect:gallery';  // Fallback redirect
 }
 
-function clear_cart() {
+
+function clear_selected()
+{
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $_SESSION['cart'] = [];
+        $_SESSION['selected'] = [];
         return 'redirect:' . $_SERVER['HTTP_REFERER'];
     }
 }
+
