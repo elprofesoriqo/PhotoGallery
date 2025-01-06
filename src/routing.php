@@ -5,6 +5,7 @@ $routing = [
     '/gallery' => 'gallery',
     '/selected' => 'selected',
     '/selected/add' => 'add_to_selected',
+    '/selected/remove_from_selected' => 'remove_from_selected',
     '/view' => 'picture',
     '/edit' => 'edit',
     '/delete' => 'delete',
@@ -13,6 +14,4 @@ $routing = [
     '/register' => 'register',
     '/login' => 'login',
     '/logout' => 'logout',
-    '/upload' => 'upload',
-    '/saved' => 'saved'
 ];

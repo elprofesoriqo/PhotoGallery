@@ -21,7 +21,7 @@ function picture(&$model)
         $id = $_GET['id'];
 
         if ($picture = get_picture($id)) {
-            $model['gallery'] = $picture;  // Changed from 'picture' to 'gallery' to match view
+            $model['gallery'] = $picture;
 
             return 'picture';
         }
@@ -51,7 +51,6 @@ function edit(&$model)
             $id = isset($_POST['id']) ? $_POST['id'] : null;
 
             try {
-                // Validate file upload
                 if ($_FILES['file']['error'] === UPLOAD_ERR_INI_SIZE) {
                     throw new Exception('File is too big (max 1MB allowed)');
                 }
@@ -179,7 +178,7 @@ function login(&$model)
 
 function logout(&$model)
 {
-    setcookie (session_id(), "", time() - 3600);
+    setcookie(session_name(), "", time() - 3600, "/");
     session_destroy();
     session_write_close();
 
@@ -190,14 +189,29 @@ function logout(&$model)
 function selected(&$model)
 {
     $model['gallery'] = get_gallery();
-    $model['selected'] = get_selected();
-    return 'components/selected';
+    $model['selected'] = &get_selected();
+    return 'selected';
+}
+
+function remove_from_selected()
+{
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['picture_id'])) {
+        $id = $_POST['picture_id'];
+
+        $selected = &get_selected();
+
+        if (isset($selected[$id])) {
+            unset($selected[$id]);
+        }
+
+        return 'redirect:' . $_SERVER['HTTP_REFERER'];
+    }
+    return 'redirect:gallery';
 }
 
 
 
-
-function add_to_selected(&$model)  // Note: must accept $model parameter
+function add_to_selected()
 {
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id1'])) {
         $db = get_db();
@@ -209,14 +223,14 @@ function add_to_selected(&$model)  // Note: must accept $model parameter
                 $amount = 1;
             }
             $id = $_POST["id$i"];
-            $product = get_picture($id);
-            $cart = &get_selected();
-            $cart[$id] = ['name' => $product['name'], 'amount' => $amount];
+            $picture = get_picture($id);
+            $selected = &get_selected();
+            $selected[$id] = ['name' => $picture['name'], 'amount' => $amount];
         }
 
         return 'redirect:' . $_SERVER['HTTP_REFERER'];
     }
-    return 'redirect:gallery';  // Fallback redirect
+    return 'redirect:gallery';
 }
 
 

@@ -32,8 +32,9 @@
 
         <div class="form-group">
             <label for="author">Author</label>
-            <input type="text" id="author" name="author" required>
+            <input type="text" id="author" name="author" value="<?php echo isset($_SESSION['loggeduser']) ? htmlspecialchars($_SESSION['loggeduser']) : ''; ?>" required>
         </div>
+
 
         <div class="form-group">
             <label for="watermark">Watermark Text</label>

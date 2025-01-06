@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>Delete Image</title>
-    <link rel="stylesheet" href="../web/static/styles/main.css">
+    <link rel="stylesheet" href="static/styles/main.css">
 </head>
 <body>
 

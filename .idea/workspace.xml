@@ -5,34 +5,29 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="db42a163-ac61-42b2-9ef7-3be9e3da5ffb" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/views/components/addpicture.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/views/components/selected.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/views/delete.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/views/picture.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/views/register.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/web/static/styles/main.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/jankowski.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/php.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/php.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/watcherTasks.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/composer.json" beforeDir="false" afterPath="$PROJECT_DIR$/composer.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/views/components/forgallery/foot.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/views/components/forgallery/header.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/views/selected.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/business.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/business.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/controller_utils.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller_utils.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/controllers.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/controllers.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/dispatcher.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/dispatcher.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/routing.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/routing.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/views/components/head.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/views/assets/styles/footes.scss" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/views/assets/styles/gallery.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/views/assets/styles/navbar.scss" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/views/assets/styles/upload.scss" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/views/components/addpicture.php" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/views/components/navbar.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/views/components/navbar.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/views/components/selected.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/views/delete.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/views/delete.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/views/edit.php" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/views/gallery.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/views/gallery.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/views/index.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/views/toheck/delete_view.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/views/toheck/edit_view.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/views/toheck/product_view.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/views/toheck/products_view.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/views/picture.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/views/picture.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/views/upload.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/views/upload.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/web/front_controller.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/web/front_controller.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/web/.htaccess" beforeDir="false" afterPath="$PROJECT_DIR$/src/web/.htaccess" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/web/static/styles/main.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/web/static/styles/main.css" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -70,26 +65,26 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main",
-    "last_opened_file_path": "C:/dev-wai",
-    "list.type.of.created.stylesheet": "CSS",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/dev-wai&quot;,
+    &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\dev-wai\src\web\static\styles" />
-      <recent name="C:\dev-wai\src\views\components" />
       <recent name="C:\dev-wai\src\views" />
+      <recent name="C:\dev-wai\src\views\components" />
+      <recent name="C:\dev-wai\src\web\static\styles" />
       <recent name="C:\dev-wai\src" />
     </key>
   </component>
@@ -115,7 +110,9 @@
       <workItem from="1736018138269" duration="645000" />
       <workItem from="1736071984734" duration="2655000" />
       <workItem from="1736075581744" duration="1399000" />
-      <workItem from="1736090004533" duration="3544000" />
+      <workItem from="1736090004533" duration="4083000" />
+      <workItem from="1736094325128" duration="72000" />
+      <workItem from="1736183222733" duration="12554000" />
     </task>
     <servers />
   </component>

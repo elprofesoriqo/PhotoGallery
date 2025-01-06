@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Image</title>
-    <link rel="stylesheet" href="../web/static/styles/main.css">
+    <link rel="stylesheet" href="static/styles/main.css">
 </head>
 <body>
 <a href="gallery" class="cancel">&laquo; Back</a><br/>

@@ -1,4 +1,4 @@
-/* General Styles */
+/* Reset & Base */
 body {
     margin: 0;
     font-family: Arial, sans-serif;
@@ -7,7 +7,7 @@ body {
     padding: 0 20px;
 }
 
-/* Container Styling */
+/* Gallery */
 .gallery-container {
     max-width: 1200px;
     margin: 0 auto;
@@ -18,9 +18,8 @@ body {
     gap: 20px;
 }
 
-/* Gallery Items */
 .gallery-item {
-    flex: 1 1 calc(30% - 20px); /* 30% width minus gap; adjusts dynamically */
+    flex: 1 1 calc(30% - 20px);
     background-color: #ffffff;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -28,7 +27,7 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: transform 0.2s ease;
 }
 
 .gallery-item:hover {
@@ -36,74 +35,107 @@ body {
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
-/* Image Styling */
 .gallery-image {
     max-width: 100%;
     border-radius: 8px;
     margin-bottom: 10px;
 }
 
-/* Typography */
-.gallery-item p {
-    margin: 5px 0;
+/* Forms */
+.upload-container, .registration-container {
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="file"],
+textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
     font-size: 14px;
-    color: #555555;
-    text-align: center;
 }
 
-h3 {
-    text-align: center;
-    color: #343a40;
+input:focus, textarea:focus {
+    border-color: #007bff;
+    outline: none;
 }
 
-/* Button Styling */
-.button {
-    display: inline-block;
+/* Buttons */
+.button, .btn-primary, input[type="submit"] {
     background-color: #007bff;
-    color: #ffffff;
+    color: white;
     border: none;
     padding: 10px 20px;
-    border-radius: 5px;
+    border-radius: 4px;
     cursor: pointer;
-    font-size: 14px;
-    text-transform: uppercase;
-    transition: background-color 0.2s ease;
+    transition: background-color 0.2s;
 }
 
-.button:hover {
+.button:hover, .btn-primary:hover {
     background-color: #0056b3;
 }
 
-/* Clearfix (if needed) */
-hr.clear {
-    border: 0;
-    border-top: 1px solid #e9ecef;
-    margin: 20px 0;
-    width: 100%;
+.cancel, .btn-secondary {
+    background-color: #6c757d;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 4px;
+    text-decoration: none;
 }
 
-/* Responsive Design */
+.cancel:hover, .btn-secondary:hover {
+    background-color: #565e64;
+}
+
+/* Alerts */
+.alert {
+    padding: 10px 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.alert-success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
 @media (max-width: 768px) {
     .gallery-item {
-        flex: 1 1 calc(45% - 20px); /* Adjust to 45% for medium screens */
+        flex: 1 1 calc(45% - 20px);
     }
 }
 
 @media (max-width: 480px) {
     .gallery-item {
-        flex: 1 1 100%; /* Full width for small screens */
+        flex: 1 1 100%;
     }
 }
-
-
-/* General Styling */
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background-color: #f8f9fa;
-}
-
-/* Navbar Styling */
 #navbar {
     background-color: #343a40;
     color: white;
@@ -151,7 +183,6 @@ body {
     font-size: 16px;
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
     .container {
         flex-direction: column;
@@ -163,7 +194,6 @@ body {
         margin: 5px 0;
     }
 }
-/* General Styles */
 body {
     margin: 0;
     font-family: Arial, sans-serif;

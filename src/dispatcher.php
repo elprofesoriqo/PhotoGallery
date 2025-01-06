@@ -4,10 +4,13 @@ const REDIRECT_PREFIX = 'redirect:';
 
 
 
-function dispatch($routing, $action_url) {
+function dispatch($routing, $action_url)
+{
     $controller_name = $routing[$action_url];
+
     $model = [];
     $view_name = $controller_name($model);
+
     build_response($view_name, $model);
 }
 

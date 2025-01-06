@@ -3,7 +3,7 @@
 use MongoDB\BSON\ObjectID;
 
 define('THUMBNAIL_WIDTH', 200);
-define('THUMBNAIL_HEIGHT', 200);
+define('THUMBNAIL_HEIGHT', 150);
 function get_db()
 {
     $mongo = new MongoDB\Client(
@@ -108,8 +108,6 @@ function save_picture($id, $picture, $watermark)
     }
     return false;
 }
-
-
 function handleImageUpload($id, $watermark) {
     try {
         if($_FILES['file']['error'] !== UPLOAD_ERR_OK) {
@@ -123,31 +121,51 @@ function handleImageUpload($id, $watermark) {
 
         $extension = ($imageType === 'image/jpeg') ? '.jpg' : '.png';
         $tempPath = $_FILES['file']['tmp_name'];
-        $targetPath = UPLOAD_PATH . $id . $extension;
 
-        if(!move_uploaded_file($tempPath, $targetPath)) {
-            return false;
+        // Ensure UPLOAD_PATH exists and is writable
+        if (!is_dir(UPLOAD_PATH)) {
+            mkdir(UPLOAD_PATH, 0755, true);
         }
 
-        // Create original image resource
+        // Generate absolute paths
+        $targetPath = rtrim(UPLOAD_PATH, '/') . '/' . $id . $extension;
+        $thumbnailPath = rtrim(UPLOAD_PATH, '/') . '/' . $id . 'thu' . $extension;
+        $watermarkPath = rtrim(UPLOAD_PATH, '/') . '/' . $id . 'wm' . $extension;
+
+        // Save original image
+        if(!move_uploaded_file($tempPath, $targetPath)) {
+            throw new Exception('Failed to save original image');
+        }
+        chmod($targetPath, 0644);
+
+        // Create image resource from original
         $sourceImage = ($imageType === 'image/jpeg') ?
             imagecreatefromjpeg($targetPath) :
             imagecreatefrompng($targetPath);
 
         if(!$sourceImage) {
-            return false;
+            throw new Exception('Failed to create image resource');
         }
+
+        // Create and save thumbnail
+        $thumbnail = resizeImage($sourceImage, THUMBNAIL_WIDTH, 125);
+        if($imageType === 'image/jpeg') {
+            imagejpeg($thumbnail, $thumbnailPath, 90);
+        } else {
+            imagepng($thumbnail, $thumbnailPath, 9);
+        }
+        chmod($thumbnailPath, 0644);
 
         // Create and save watermarked version
         $watermarked = addWatermark($sourceImage, $watermark);
-        $watermarkPath = UPLOAD_PATH . $id . 'wm' . $extension;
-
         if($imageType === 'image/jpeg') {
             imagejpeg($watermarked, $watermarkPath, 90);
         } else {
             imagepng($watermarked, $watermarkPath, 9);
         }
+        chmod($watermarkPath, 0644);
 
+        imagedestroy($thumbnail);
         imagedestroy($watermarked);
         imagedestroy($sourceImage);
 
@@ -157,16 +175,11 @@ function handleImageUpload($id, $watermark) {
         return false;
     }
 }
+
 function delete_picture($id)
 {
     $db = get_db();
     $db->gallery->deleteOne(['_id' => new ObjectID($id)]);
-}
-
-function drop_users()
-{
-    $db = get_db();
-    $db->users->drop();
 }
 
 function getImgType($type)
