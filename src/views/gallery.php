@@ -55,8 +55,6 @@ include 'components/forgallery/header.php';
                 </div>
             <?php endforeach ?>
         </form>
-    <?php else: ?>
-        <p class="no-images">No photos available</p>
     <?php endif ?>
 </div>
 <?php

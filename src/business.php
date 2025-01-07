@@ -27,15 +27,6 @@ function get_gallery()
 }
 
 
-
-
-function get_users()
-{
-    $db = get_db();
-    return $db->users->find()->toArray();
-}
-
-
 function get_picture($id)
 {
     $db = get_db();
@@ -57,30 +48,28 @@ function save_user($user)
 }
 
 
-function authenticate($login, $pass){
-    try{
+function authenticate($login, $pass) {
+    try {
         $db = get_db();
-        
-        $result = $db->users->findOne(['login' => $login]);
-        if(empty($result))
-        {
-            throw new Exception('Incorrect login details');
-        }
-        $hash=$result['hash'];
-        
-        if(password_verify($pass, $hash)){
-            
-            $_SESSION['islogged']=1;
-            $_SESSION['loggedid']=session_id();
-            $_SESSION['loggeduser']=$login;
+        $user = $db->users->findOne(['login' => $login]);
 
-        }else{
+        if (!$user) {
             throw new Exception('Incorrect login details');
         }
-    }catch(Exception $e){
-        $_SESSION['error']=$e->getMessage();
+
+        if (password_verify($pass, $user['hash'])) {
+            $_SESSION['islogged'] = true;
+            $_SESSION['loggedid'] = session_id();
+            $_SESSION['loggeduser'] = $login;
+        } else {
+            throw new Exception('Incorrect login details');
+        }
+
+    } catch (Exception $e) {
+        $_SESSION['error'] = $e->getMessage();
         return false;
     }
+
     return true;
 }
 
@@ -122,23 +111,19 @@ function handleImageUpload($id, $watermark) {
         $extension = ($imageType === 'image/jpeg') ? '.jpg' : '.png';
         $tempPath = $_FILES['file']['tmp_name'];
 
-        // Ensure UPLOAD_PATH exists and is writable
         if (!is_dir(UPLOAD_PATH)) {
             mkdir(UPLOAD_PATH, 0755, true);
         }
 
-        // Generate absolute paths
         $targetPath = rtrim(UPLOAD_PATH, '/') . '/' . $id . $extension;
         $thumbnailPath = rtrim(UPLOAD_PATH, '/') . '/' . $id . 'thu' . $extension;
         $watermarkPath = rtrim(UPLOAD_PATH, '/') . '/' . $id . 'wm' . $extension;
 
-        // Save original image
         if(!move_uploaded_file($tempPath, $targetPath)) {
             throw new Exception('Failed to save original image');
         }
         chmod($targetPath, 0644);
 
-        // Create image resource from original
         $sourceImage = ($imageType === 'image/jpeg') ?
             imagecreatefromjpeg($targetPath) :
             imagecreatefrompng($targetPath);
@@ -147,7 +132,6 @@ function handleImageUpload($id, $watermark) {
             throw new Exception('Failed to create image resource');
         }
 
-        // Create and save thumbnail
         $thumbnail = resizeImage($sourceImage, THUMBNAIL_WIDTH, 125);
         if($imageType === 'image/jpeg') {
             imagejpeg($thumbnail, $thumbnailPath, 90);
@@ -156,7 +140,6 @@ function handleImageUpload($id, $watermark) {
         }
         chmod($thumbnailPath, 0644);
 
-        // Create and save watermarked version
         $watermarked = addWatermark($sourceImage, $watermark);
         if($imageType === 'image/jpeg') {
             imagejpeg($watermarked, $watermarkPath, 90);
@@ -174,12 +157,6 @@ function handleImageUpload($id, $watermark) {
         $_SESSION['error'] = $e->getMessage();
         return false;
     }
-}
-
-function delete_picture($id)
-{
-    $db = get_db();
-    $db->gallery->deleteOne(['_id' => new ObjectID($id)]);
 }
 
 function getImgType($type)
@@ -218,33 +195,9 @@ function validate_data($login, $email, $pass, $pass2)
 
 
 
-define('UPLOAD_PATH', '../../images/');
-define('MAX_FILE_SIZE', 1048576); // 1MB in bytes
+define('UPLOAD_PATH', '/web/images/');
+define('MAX_FILE_SIZE', 1048576); // 1MB
 
-
-function uploadImage($file, $watermark, $id) {
-    try {
-        if (!checkUpload($file)) {
-            throw new Exception('Invalid file upload');
-        }
-
-        $imageType = $file['type'];
-        $fileExtension = getFileExtension($imageType);
-
-        $tempPath = $file['tmp_name'];
-        $targetPath = UPLOAD_PATH . $id . $fileExtension;
-
-        if (!move_uploaded_file($tempPath, $targetPath)) {
-            throw new Exception('Failed to move uploaded file');
-        }
-
-        processImage($targetPath, $imageType, $id, $watermark);
-        return true;
-
-    } catch (Exception $e) {
-        throw $e;
-    }
-}
 
 function resizeImage($source, $width, $height) {
     $sourceWidth = imagesx($source);
@@ -252,7 +205,6 @@ function resizeImage($source, $width, $height) {
 
     $resized = imagecreatetruecolor($width, $height);
     imagecopyresampled($resized, $source, 0, 0, 0, 0, $width, $height, $sourceWidth, $sourceHeight);
-
     return $resized;
 }
 
@@ -275,25 +227,7 @@ function addWatermark($sourceImage, $watermarkText) {
             imagestring($watermarked, $fontSize, $x, $y, $watermarkText, $white);
         }
     }
-
     return $watermarked;
-}
-
-function saveImage($image, $path, $imageType) {
-    if (!is_resource($image) && !is_object($image)) {
-        throw new Exception('Invalid image resource provided');
-    }
-
-    $result = false;
-    if ($imageType === 'image/jpeg') {
-        $result = imagejpeg($image, $path, 90);
-    } else if ($imageType === 'image/png') {
-        $result = imagepng($image, $path, 9);
-    }
-
-    if (!$result) {
-        throw new Exception('Failed to save image: ' . $path);
-    }
 }
 
 function getFileExtension($mimeType) {
@@ -320,19 +254,14 @@ function getUploadErrorMessage($errorCode) {
     return $messages[$errorCode] ?? 'Unknown upload error occurred';
 }
 function checkUpload($file) {
-    // Check for basic upload errors
     if ($file['error'] !== UPLOAD_ERR_OK) {
         $_SESSION['error'] = getUploadErrorMessage($file['error']);
         return false;
     }
-
-    // Check file size
     if ($file['size'] > MAX_FILE_SIZE) {
         $_SESSION['error'] = 'File size exceeds the maximum limit of 1MB';
         return false;
     }
-
-    // Check file type
     if (!in_array($file['type'], ['image/jpeg', 'image/png'])) {
         $_SESSION['error'] = 'Only JPEG and PNG files are allowed';
         return false;

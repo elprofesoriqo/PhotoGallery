@@ -2,9 +2,9 @@
     <div class="container">
         <a href="gallery" class="nav-item">Gallery</a>
         <a href="edit" class="nav-item">Add Photo</a>
+        <a href="selected" class="nav-item">Selected Photos</a>
 
         <?php if (isset($_SESSION['islogged'])): ?>
-            <a href="selected" class="nav-item">Selected Photos</a>
             <a href="logout" class="nav-action">Logout</a>
             <?php if (isset($_SESSION['loggeduser'])): ?>
                 <span class="nav-user">Logged in as: <?= htmlspecialchars($_SESSION['loggeduser']) ?></span>

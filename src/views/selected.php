@@ -24,7 +24,6 @@
             <?php foreach ($gallery as $picture): $isChecked = 0; ?>
                 <?php if (!empty($selected)): $item = $picture['_id']; ?>
                     <?php
-                    // Sprawdzamy, czy dany element istnieje w $_SESSION['selected']
                     if (isset($selected["$item"]) && $selected["$item"]['amount']) {
                         $counter += 1;
                         ?>
@@ -49,8 +48,6 @@
                     <?php } ?>
                 <?php endif ?>
             <?php endforeach ?>
-        <?php else: ?>
-            <p class="alert alert-danger">No images</p>
         <?php endif ?>
     </div>
 </div>

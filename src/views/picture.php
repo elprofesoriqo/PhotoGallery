@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="static/styles/main.css">
 </head>
 <body>
-<a href="gallery" class="cancel">&laquo; Back</a><br/>
+<a href="gallery" class="cancel">Back</a><br/>
 
 <h1><?= $gallery['name'] ?></h1>
 
@@ -17,10 +17,6 @@
     <img src="<?= "../../images/".$gallery['_id']."wm".$gallery['extension'] ?>" alt="watermarked" /> <br/>
 </a>
 
-<br/>
-<a href="delete?id=<?= $gallery['_id'] ?>">Delete</a>
-
-<hr/>
 
 </body>
 </html>

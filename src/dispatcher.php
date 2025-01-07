@@ -2,8 +2,6 @@
 
 const REDIRECT_PREFIX = 'redirect:';
 
-
-
 function dispatch($routing, $action_url)
 {
     $controller_name = $routing[$action_url];

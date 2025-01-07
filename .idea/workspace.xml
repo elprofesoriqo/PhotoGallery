@@ -5,27 +5,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="db42a163-ac61-42b2-9ef7-3be9e3da5ffb" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/views/components/forgallery/foot.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/views/components/forgallery/header.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/views/selected.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/business.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/business.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/controller_utils.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller_utils.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/controllers.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/controllers.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/dispatcher.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/dispatcher.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/routing.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/routing.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/views/assets/styles/footes.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/views/assets/styles/gallery.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/views/assets/styles/navbar.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/views/assets/styles/upload.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/views/components/addpicture.php" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/views/components/navbar.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/views/components/navbar.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/views/components/selected.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/views/delete.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/views/delete.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/views/edit.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/views/delete.php" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/views/gallery.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/views/gallery.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/views/picture.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/views/picture.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/views/upload.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/views/upload.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/views/selected.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/views/selected.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/web/.htaccess" beforeDir="false" afterPath="$PROJECT_DIR$/src/web/.htaccess" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/web/static/styles/main.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/web/static/styles/main.css" afterDir="false" />
     </list>
@@ -82,10 +72,11 @@
 }</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\dev-wai\src\web" />
+      <recent name="C:\dev-wai" />
+      <recent name="C:\dev-wai\src" />
       <recent name="C:\dev-wai\src\views" />
       <recent name="C:\dev-wai\src\views\components" />
-      <recent name="C:\dev-wai\src\web\static\styles" />
-      <recent name="C:\dev-wai\src" />
     </key>
   </component>
   <component name="SharedIndexes">
@@ -112,7 +103,10 @@
       <workItem from="1736075581744" duration="1399000" />
       <workItem from="1736090004533" duration="4083000" />
       <workItem from="1736094325128" duration="72000" />
-      <workItem from="1736183222733" duration="12554000" />
+      <workItem from="1736183222733" duration="12952000" />
+      <workItem from="1736196485874" duration="3160000" />
+      <workItem from="1736199666285" duration="151000" />
+      <workItem from="1736200030219" duration="66000" />
     </task>
     <servers />
   </component>

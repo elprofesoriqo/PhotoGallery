@@ -6,9 +6,7 @@ require_once 'controller_utils.php';
 function gallery(&$model)
 {
     $gallery = get_gallery();
-
     $model['gallery'] = $gallery;
-
     return 'gallery';
 }
 
@@ -26,7 +24,6 @@ function picture(&$model)
             return 'picture';
         }
     }
-
     http_response_code(404);
     exit;
 }
@@ -66,8 +63,6 @@ function edit(&$model)
                     'type' => $_FILES['file']['type'],
                     'extension' => getFileExtension($_FILES['file']['type'])
                 ];
-
-                // Save picture and process image
                 if (save_picture($id, $picture, $_POST['watermark'])) {
                     return 'redirect:gallery';
                 }
@@ -93,65 +88,37 @@ function edit(&$model)
 }
 
 
-
-
-function delete(&$model)
-{
-    if (!empty($_REQUEST['id'])) {
-        $id = $_REQUEST['id'];
-
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            delete_picture($id);
-            return 'redirect:gallery';
-
-        } else {
-            if ($picture = get_picture($id)) {
-                $model['gallery'] = $picture;
-                return 'delete';
-            }
-        }
-    }
-    http_response_code(404);
-    exit;
-}
-
-
-
 function register(&$model)
 {
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        if(isset($_POST['login']) && isset($_POST['pass']) && isset($_POST['pass2']) && isset($_POST['email']))
-        {
-            $login=trim($_POST['login']);
-            $email=trim($_POST['email']);
-            $pass=trim($_POST['pass']);
-            $pass2=trim($_POST['pass2']);
-
-            if(validate_data($login,$email,$pass,$pass2)){
-                
-                $hash=password_hash($pass, PASSWORD_DEFAULT);
-
-                $user = [
-                    'login' => $login,
-                    'email' => $email,
-                    'hash' => $hash=password_hash($pass, PASSWORD_DEFAULT)
-
-                ];
-                save_user($user);
-
-
-                return 'redirect:gallery';
-
-            }else {
-                return 'register';
-            }
-        }
-    } else {
-            return 'register';
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        return 'register';
     }
 
-    return 'redirect:gallery';
+    $login = isset($_POST['login']) ? trim($_POST['login']) : null;
+    $email = isset($_POST['email']) ? trim($_POST['email']) : null;
+    $pass = isset($_POST['pass']) ? trim($_POST['pass']) : null;
+    $pass2 = isset($_POST['pass2']) ? trim($_POST['pass2']) : null;
+
+    if ($login && $email && $pass && $pass2) {
+        if (validate_data($login, $email, $pass, $pass2)) {
+            $hash = password_hash($pass, PASSWORD_DEFAULT);
+
+            $user = [
+                'login' => $login,
+                'email' => $email,
+                'hash' => $hash,
+            ];
+            save_user($user);
+
+            return 'redirect:gallery';
+        } else {
+            return 'register';
+        }
+    }
+
+    return 'register';
 }
+
 
 
 function login(&$model)
@@ -233,12 +200,4 @@ function add_to_selected()
     return 'redirect:gallery';
 }
 
-
-function clear_selected()
-{
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $_SESSION['selected'] = [];
-        return 'redirect:' . $_SERVER['HTTP_REFERER'];
-    }
-}
 

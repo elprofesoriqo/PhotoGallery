@@ -1,5 +1,5 @@
 <?php
-// routing.php
+
 $routing = [
     '/' => 'gallery',
     '/gallery' => 'gallery',
@@ -8,7 +8,6 @@ $routing = [
     '/selected/remove_from_selected' => 'remove_from_selected',
     '/view' => 'picture',
     '/edit' => 'edit',
-    '/delete' => 'delete',
     '/gallery/clear' => 'clear_gallery',
     '/gallery/add' => 'add_to_gallery',
     '/register' => 'register',
