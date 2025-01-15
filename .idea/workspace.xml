@@ -4,21 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="db42a163-ac61-42b2-9ef7-3be9e3da5ffb" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/business.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/business.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/controllers.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/controllers.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/dispatcher.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/dispatcher.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routing.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/routing.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/views/components/navbar.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/views/components/navbar.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/views/delete.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/views/gallery.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/views/gallery.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/views/picture.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/views/picture.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/views/selected.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/views/selected.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/web/.htaccess" beforeDir="false" afterPath="$PROJECT_DIR$/src/web/.htaccess" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/web/static/styles/main.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/web/static/styles/main.css" afterDir="false" />
-    </list>
+    <list default="true" id="db42a163-ac61-42b2-9ef7-3be9e3da5ffb" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -107,6 +93,7 @@
       <workItem from="1736196485874" duration="3160000" />
       <workItem from="1736199666285" duration="151000" />
       <workItem from="1736200030219" duration="66000" />
+      <workItem from="1736280136260" duration="655000" />
     </task>
     <servers />
   </component>
