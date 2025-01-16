@@ -1,0 +1,4 @@
+db.gallery.deleteMany({ type: { $regex: "^image/" } });
+mongo -u wai_web -p w@i_w3b --authenticationDatabase wai
+db.gallery.find().pretty();
+use wai
