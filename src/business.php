@@ -195,7 +195,7 @@ function validate_data($login, $email, $pass, $pass2)
 
 
 
-define('UPLOAD_PATH', __dir__.'/web/images/');
+define('UPLOAD_PATH','/web/images/');
 define('MAX_FILE_SIZE', 1048576); // 1MB
 
 
